@@ -283,6 +283,16 @@ jobs:
               echo "$name" > /tmp/winner
               return 0
             fi
+            if grep -q "KLIB resolver: Could not find" "/tmp/exp_$name.log"; then
+              echo "EXP $name: KLIB 缺失，清理 coil 缓存后带 --refresh-dependencies 重试"
+              rm -rf "$HOME/.gradle/caches/modules-2/files-2.1/io.coil-kt.coil3"
+              if ./gradlew --refresh-dependencies :markdown-renderer:compileKotlinIosArm64 > "/tmp/exp_${name}_retry.log" 2>&1; then
+                echo "EXP $name: SUCCESS (after refresh)"
+                echo "$name" > /tmp/winner
+                return 0
+              fi
+              cp "/tmp/exp_${name}_retry.log" "/tmp/exp_$name.log"
+            fi
             echo "EXP $name: FAILED"
             echo "---- e: lines ----"
             grep -m15 "^e: " "/tmp/exp_$name.log" || echo "(no e: lines)"
@@ -300,15 +310,16 @@ jobs:
             grep -n "kotlin(\"\|org.jetbrains.compose" build.gradle.kts | head -6
           }
           WIN=""
-          reset; setv 2.5.0-Beta1 1.12.2
-          exp k250c112 && WIN=k250c112
+          rm -rf "$HOME/.gradle/caches/modules-2/files-2.1/io.coil-kt.coil3"
+          reset; setv 2.3.21 keep
+          exp k2321 && WIN=k2321
           if [ -z "$WIN" ]; then
             reset; setv 2.4.10 keep
             exp k2410 && WIN=k2410
           fi
           if [ -z "$WIN" ]; then
-            reset; setv 2.3.21 keep
-            exp k2321 && WIN=k2321
+            reset; setv 2.5.0-Beta1 1.12.2
+            exp k250c112 && WIN=k250c112
           fi
           echo "WINNER=$WIN"
           if [ -z "$WIN" ]; then
