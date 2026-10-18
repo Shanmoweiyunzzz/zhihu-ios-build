@@ -328,8 +328,16 @@ jobs:
             grep -n "kotlin(\"\|org.jetbrains.compose" build.gradle.kts | head -6
           }
           WIN=""
-          reset; setv 2.4.10 keep
-          exp k2410 && WIN=k2410
+          # 【第 15 轮】k240 = 上游原生组合（Kotlin 2.4.0 + CMP 1.11.1 + coil 3.5.0）：
+          # coil 3.5.0 klib 由 Kotlin 2.4.0 产出（可读）、skiko 0.144.6 对齐、
+          # compose 编译器 2.4.0 与 CMP 1.11.1 同代。此前从未直接测过 2.4.0
+          # （步骤 3 总是先把它强升到 2.4.21，而 2.4.10/2.5.0-Beta1 均崩溃）。
+          reset; setv 2.4.0 keep
+          exp k240 && WIN=k240
+          if [ -z "$WIN" ]; then
+            reset; setv 2.4.10 keep
+            exp k2410 && WIN=k2410
+          fi
           if [ -z "$WIN" ]; then
             reset; setv 2.5.0-Beta1 1.12.2
             exp k250c112 && WIN=k250c112
