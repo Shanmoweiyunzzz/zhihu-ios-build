@@ -412,6 +412,7 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           gh release delete build-logs --yes --cleanup-tag 2>/dev/null || true
           gh release create build-logs --title "构建产物（自动覆盖）" --notes "每次构建覆盖：gradle.log 为最近一次诊断日志；IPA 出现即代表构建成功" || echo "CREATE_FAILED exit=$?"
