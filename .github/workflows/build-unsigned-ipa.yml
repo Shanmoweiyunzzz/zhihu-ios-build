@@ -284,6 +284,9 @@ jobs:
               return 0
             fi
             echo "EXP $name: FAILED"
+            echo "---- e: lines ----"
+            grep -m15 "^e: " "/tmp/exp_$name.log" || echo "(no e: lines)"
+            grep -m3 "IrErrorType" "/tmp/exp_$name.log" || echo "(no IrErrorType)"
             diag "/tmp/exp_$name.log" | tee "/tmp/diag_$name.txt"
             return 1
           }
