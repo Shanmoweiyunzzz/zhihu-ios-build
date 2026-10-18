@@ -330,23 +330,63 @@ jobs:
           WIN=""
           # 【第 15 轮】k240 = 上游原生组合（Kotlin 2.4.0 + CMP 1.11.1 + coil 3.5.0）：
           # coil 3.5.0 klib 由 Kotlin 2.4.0 产出（可读）、skiko 0.144.6 对齐、
-          # compose 编译器 2.4.0 与 CMP 1.11.1 同代。此前从未直接测过 2.4.0
-          # （步骤 3 总是先把它强升到 2.4.21，而 2.4.10/2.5.0-Beta1 均崩溃）。
+          # compose 编译器 2.4.0 与 CMP 1.11.1 同代。此前从未直接测过 2.4.0。
           reset; setv 2.4.0 keep
           exp k240 && WIN=k240
-          if [ -z "$WIN" ]; then
-            reset; setv 2.4.10 keep
-            exp k2410 && WIN=k2410
-          fi
-          if [ -z "$WIN" ]; then
-            reset; setv 2.5.0-Beta1 1.12.2
-            exp k250c112 && WIN=k250c112
-          fi
-          if [ -z "$WIN" ]; then
-            reset; setv 2.3.21 keep
-            exp k2321 && WIN=k2321
-          fi
           echo "WINNER=$WIN"
+          if [ -z "$WIN" ]; then
+            # 【第 17 轮】源码二分：定位 markdown-renderer 中触发 IrErrorType 的文件组。
+            # 判读：仍崩(IrErrorType)=触发源不在移除集；普通编译错误=移除集可疑或连锁；
+            # SUCCESS=移除集即触发源。
+            setv 2.4.0 keep
+            MDR=third_party/markdown/markdown-renderer/src
+          bisect() {
+            name="$1"; shift
+            git checkout -q -- $MDR
+            mkdir -p /tmp/hold/$name
+            for f in "$@"; do
+              mkdir -p "/tmp/hold/$name/$(dirname "$f")"
+              mv "$MDR/$f" "/tmp/hold/$name/$f"
+            done
+            echo "===== BISECT $name ====="
+            if ./gradlew :markdown-renderer:compileKotlinIosArm64 > "/tmp/bisect_$name.log" 2>&1; then
+              echo "BISECT $name: SUCCESS → 触发源在移除集: $*"
+            elif grep -q "IrErrorType" "/tmp/bisect_$name.log"; then
+              echo "BISECT $name: 仍 IrErrorType → 触发源不在: $*"
+            else
+              echo "BISECT $name: 普通编译错误 → 移除集可疑或连锁引用"
+              grep -m6 "^e: " "/tmp/bisect_$name.log" || true
+            fi
+            git checkout -q -- $MDR
+          }
+          bisect diagrams \
+            commonMain/kotlin/com/hrm/markdown/renderer/diagram/DiagramFallback.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/diagram/GraphvizRenderer.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/diagram/MermaidFlowchartRenderer.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/diagram/MermaidSequenceRenderer.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/diagram/PlantUMLSequenceRenderer.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/block/DiagramBlockRenderer.kt
+          bisect selection \
+            commonMain/kotlin/com/hrm/markdown/renderer/selection/PersistentSelectionContainer.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/selection/PersistentSelectionEngine.kt \
+            iosMain/kotlin/com/hrm/markdown/renderer/selection/PersistentSelectionEngine.ios.kt
+          bisect navigation \
+            commonMain/kotlin/com/hrm/markdown/renderer/FootnoteNavigation.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/MarkdownNavigationController.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/SegmentHighlightInteraction.kt
+          bisect streaming \
+            commonMain/kotlin/com/hrm/markdown/renderer/MarkdownStreaming.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/MarkdownHtml.kt
+          bisect inline \
+            commonMain/kotlin/com/hrm/markdown/renderer/inline/InlineEmbeddedRenderers.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/inline/InlineFlowLayoutEngine.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/inline/InlineFlowModels.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/inline/InlineFlowText.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/inline/InlineRenderModels.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/inline/InlineRenderUtils.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/inline/InlineRenderer.kt \
+            commonMain/kotlin/com/hrm/markdown/renderer/inline/InlineWidgets.kt
+          git checkout -q -- $MDR
           if [ -z "$WIN" ]; then
             echo "所有版本实验均失败"
             { for f in /tmp/exp_*.log; do echo; echo "########## $f"; diag "$f"; done; } > /tmp/gradle.log
@@ -401,6 +441,7 @@ jobs:
           cp /tmp/gradle.log logs/ 2>/dev/null || true
           cp /tmp/xcodebuild.log logs/ 2>/dev/null || true
           cp /tmp/exp_*.log logs/ 2>/dev/null || true
+          cp /tmp/bisect_*.log logs/ 2>/dev/null || true
           cp /tmp/diag_*.txt logs/ 2>/dev/null || true
           echo "=== 失败摘要（若有） ==="
           grep -m 30 -E "error:|^e: |FAILURE|Undefined symbols|not found" logs/*.log 2>/dev/null || echo "(无错误关键字)"
