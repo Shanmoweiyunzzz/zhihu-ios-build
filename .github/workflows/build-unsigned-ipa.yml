@@ -265,26 +265,37 @@ jobs:
         run: |
           set -uo pipefail
           cd src
-          # 版本实验：Kotlin/Compose 组合（winner 的文件改动保留，直接续跑全流程）
-          setv() {  # $1=kotlin version  $2=compose version ("keep" 不改)
-            sed -i '' -e "s/version \"2\.[0-9A-Za-z.-]*\"/version \"$1\"/g" build.gradle.kts buildSrc/build.gradle.kts
-            if [ "$2" != "keep" ]; then
-              sed -i '' -e "s/org.jetbrains.compose\") version \"[0-9.]*\"/org.jetbrains.compose\") version \"$2\"/" build.gradle.kts
-            fi
+          diag() {
+            log="$1"
+            echo "---- head(2k) ----"
+            head -c 2000 "$log"
+            echo ""
+            echo "---- What went wrong ----"
+            grep -m1 -A 25 "^\* What went wrong" "$log" || echo "(none)"
+            echo "---- Caused by ----"
+            grep -m8 -A2 "Caused by" "$log" || echo "(none)"
           }
           exp() {
             name="$1"
             echo "===== EXP $name ====="
-            if ./gradlew :markdown-renderer:compileKotlinIosArm64 --stacktrace > "/tmp/exp_$name.log" 2>&1; then
+            if ./gradlew :markdown-renderer:compileKotlinIosArm64 > "/tmp/exp_$name.log" 2>&1; then
               echo "EXP $name: SUCCESS"
               echo "$name" > /tmp/winner
               return 0
             fi
             echo "EXP $name: FAILED"
-            grep -m6 -E "^e: |IrErrorType|Could not|requires" "/tmp/exp_$name.log" || echo "(no e: lines)"
+            diag "/tmp/exp_$name.log" | tee "/tmp/diag_$name.txt"
             return 1
           }
           reset() { git checkout -q -- build.gradle.kts buildSrc/build.gradle.kts; }
+          setv() {
+            sed -i '' -e "s/version \"2\.[0-9A-Za-z.-]*\"/version \"$1\"/g" build.gradle.kts buildSrc/build.gradle.kts
+            if [ "$2" != "keep" ]; then
+              sed -i '' -e "s/org.jetbrains.compose\") version \"[0-9.]*\"/org.jetbrains.compose\") version \"$2\"/" build.gradle.kts
+            fi
+            echo "--- setv $1 $2 ---"
+            grep -n "kotlin(\"\|org.jetbrains.compose" build.gradle.kts | head -6
+          }
           WIN=""
           reset; setv 2.5.0-Beta1 1.12.2
           exp k250c112 && WIN=k250c112
@@ -299,11 +310,10 @@ jobs:
           echo "WINNER=$WIN"
           if [ -z "$WIN" ]; then
             echo "所有版本实验均失败"
-            { for f in /tmp/exp_*.log; do echo; echo "########## $f"; tail -c 20000 "$f"; done; } > /tmp/gradle.log
+            { for f in /tmp/exp_*.log; do echo; echo "########## $f"; diag "$f"; done; } > /tmp/gradle.log
             exit 1
           fi
-          # winner 的版本配置已在工作区，直接编译完整 framework 继续流水线
-          ./gradlew :shared:linkDebugFrameworkIosArm64 --stacktrace 2>&1 | tee /tmp/gradle.log
+          ./gradlew :shared:linkDebugFrameworkIosArm64 2>&1 | tee /tmp/gradle.log
           test -f shared/build/bin/iosArm64/debugFramework/shared.framework/shared
 
       - name: 7/9 生成 Xcode 工程
