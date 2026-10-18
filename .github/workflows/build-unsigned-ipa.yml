@@ -289,7 +289,7 @@ jobs:
           }
           reset() { git checkout -q -- build.gradle.kts buildSrc/build.gradle.kts; }
           setv() {
-            sed -i '' -e "s/version \"2\.[0-9A-Za-z.-]*\"/version \"$1\"/g" build.gradle.kts buildSrc/build.gradle.kts
+            sed -i '' -E -e 's/kotlin\(("[a-zA-Z.]+")\) version "[^"]+"/kotlin(\1) version "'"$1"'"/g' build.gradle.kts buildSrc/build.gradle.kts
             if [ "$2" != "keep" ]; then
               sed -i '' -e "s/org.jetbrains.compose\") version \"[0-9.]*\"/org.jetbrains.compose\") version \"$2\"/" build.gradle.kts
             fi
