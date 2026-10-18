@@ -33,7 +33,7 @@ jobs:
       UPSTREAM: "https://github.com/zly2006/zhihu-plus-plus.git"
       UPSTREAM_SHA: "973ae187134bf0e7e3417064ab8a93d02496e2a0"
       OVERLAY_B64: |
-        H4sIAIXq1GoC/+1d63fTxrbnc/6KObn3g90GOW8gq9Dm4RQvkjgnNnB7u7oSxZ4kOsiSjyQH0i7u
+        H4sIAO731GoC/+1d63fTxrbnc/6KObn3g90GOW8gq9Dm4RQvkjgnNnB7u7oSxZ4kOsiSjyQH0i7u
         cqCBAAlJT1NegfIogZSWBPqgIQ/yv9xasv2p/8Ldo5FkSZbtpOSwesECElua2bNnz549v71nj2AC
         TOCjfvbMUczGsbTv33LV06vU7/r6pubCZ3K/ob6xoXEfOrPvDVwpWWElaH7fu3k1HkQJhUvgww0H
         DjU2NR1saWlkGg42HWpoOVSzr3q99Rcnyu3JZCApif/AMYWZSPD/nvnf2txcav4317e27GtoaWxt
@@ -203,6 +203,23 @@ jobs:
           }
           APPEND
           tail -14 shared/build.gradle.kts
+          # 编译策略调整：in-process 保留完整编译器输出（守护进程崩溃会吞掉真实错误），
+          # 关闭 Kotlin/Native 增量编译，放大 Gradle 堆
+          python3 - gradle.properties <<'GP'
+          import sys
+          p = sys.argv[1]
+          s = open(p, encoding="utf-8").read()
+          s = s.replace("kotlin.compiler.execution.strategy=daemon",
+                        "kotlin.compiler.execution.strategy=in-process")
+          s = s.replace("kotlin.daemon.jvmargs=-Xmx3072m",
+                        "kotlin.daemon.jvmargs=-Xmx8192m")
+          if "org.gradle.jvmargs" not in s:
+              s += "\norg.gradle.jvmargs=-Xmx8192m\n"
+          if "kotlin.native.incremental" not in s:
+              s += "kotlin.native.incremental=false\n"
+          open(p, "w", encoding="utf-8").write(s)
+          GP
+          grep -nE "execution.strategy|incremental|jvmargs" gradle.properties
 
       - name: 4/9 安装 JDK 21
         uses: actions/setup-java@v4
