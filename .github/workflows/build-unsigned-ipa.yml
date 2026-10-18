@@ -263,9 +263,50 @@ jobs:
 
       - name: 6/9 编译 Kotlin/Native framework
         run: |
-          set -o pipefail
+          set -uo pipefail
           cd src
-          ./gradlew :shared:linkDebugFrameworkIosArm64 --no-daemon --stacktrace 2>&1 | tee /tmp/gradle.log
+          M="third_party/markdown/markdown-renderer/build.gradle.kts"
+          M3_OLD="material3:1.10.0-alpha05"
+          exp() {
+            name="$1"
+            echo "===== EXP $name ====="
+            if ./gradlew :markdown-renderer:compileKotlinIosArm64 > "/tmp/exp_$name.log" 2>&1; then
+              echo "EXP $name: SUCCESS"
+              echo "$name" > /tmp/winner
+              return 0
+            fi
+            echo "EXP $name: FAILED"
+            grep -m4 -E "^e: |IrErrorType" "/tmp/exp_$name.log" || echo "(no e: lines)"
+            return 1
+          }
+          WIN=""
+          exp base && WIN=base
+          if [ -z "$WIN" ]; then
+            git checkout -q -- "$M"
+            sed -i '' "s/$M3_OLD/material3:1.11.0-alpha07/" "$M"
+            exp m3_111a07 && WIN=m3_111a07
+          fi
+          if [ -z "$WIN" ]; then
+            git checkout -q -- "$M"
+            sed -i '' "s/$M3_OLD/material3:1.9.0/" "$M"
+            exp m3_090 && WIN=m3_090
+          fi
+          if [ -z "$WIN" ]; then
+            git checkout -q -- "$M"
+            sed -i '' "/$M3_OLD/d" "$M"
+            exp m3_none && WIN=m3_none
+          fi
+          echo "WINNER=$WIN"
+          case "$WIN" in
+            base) : ;;
+            m3_111a07) git checkout -q -- "$M"; sed -i '' "s/$M3_OLD/material3:1.11.0-alpha07/" "$M" ;;
+            m3_090)    git checkout -q -- "$M"; sed -i '' "s/$M3_OLD/material3:1.9.0/" "$M" ;;
+            m3_none)   git checkout -q -- "$M"; sed -i '' "/$M3_OLD/d" "$M" ;;
+            *) echo "所有实验均失败"; exit 1 ;;
+          esac
+          grep -n "material3" "$M" || true
+          { for f in /tmp/exp_*.log; do echo; echo "########## $f"; cat "$f"; done; } > /tmp/gradle.log
+          test -n "$WIN"
 
       - name: 7/9 生成 Xcode 工程
         run: |
