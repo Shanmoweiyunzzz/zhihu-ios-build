@@ -220,6 +220,20 @@ jobs:
           open(p, "w", encoding="utf-8").write(s)
           GP
           grep -nE "execution.strategy|incremental|jvmargs" gradle.properties
+          # Kotlin 2.4.0 -> 2.4.21：修复 markdown-renderer 在 iOS 目标上
+          # 「Serialization of IrErrorType is not supported anymore」编译器内部崩溃
+          python3 - <<'KV'
+          for f in ("build.gradle.kts", "buildSrc/build.gradle.kts"):
+              s = open(f, encoding="utf-8").read()
+              n = s.replace('"2.4.0"', '"2.4.21"')
+              assert n != s, "Kotlin 版本字符串未找到: " + f
+              open(f, "w", encoding="utf-8").write(n)
+              print("Kotlin bumped to 2.4.21 in", f)
+          KV
+          grep -n '2\.4\.2' build.gradle.kts buildSrc/build.gradle.kts
+          # 兜底：关闭 Kotlin/Native 缓存（规避 klib 序列化类历史问题）
+          grep -q "kotlin.native.cacheKind" gradle.properties || echo "kotlin.native.cacheKind=none" >> gradle.properties
+          tail -2 gradle.properties
 
       - name: 4/9 安装 JDK 21
         uses: actions/setup-java@v4
