@@ -262,87 +262,49 @@ jobs:
           fi
 
       - name: 6/9 编译 Kotlin/Native framework
-        env:
-          PATCH_COIL_B64: |
-            CmltcG9ydCByZQpiID0gInRoaXJkX3BhcnR5L21hcmtkb3duL21hcmtkb3duLXJlbmRlcm
-            VyL2J1aWxkLmdyYWRsZS5rdHMiCnMgPSBvcGVuKGIsIGVuY29kaW5nPSJ1dGYtOCIpLnJl
-            YWQoKQpzID0gcy5yZXBsYWNlKCdpbXBsZW1lbnRhdGlvbigiaW8uY29pbC1rdC5jb2lsMz
-            pjb2lsLWNvbXBvc2U6My41LjAiKVxuJywgIiIpCnMgPSBzLnJlcGxhY2UoJ2ltcGxlbWVu
-            dGF0aW9uKCJpby5jb2lsLWt0LmNvaWwzOmNvaWwtbmV0d29yay1rdG9yMzozLjUuMCIpXG
-            4nLCAiIikKYXNzZXJ0ICJjb2lsLWNvbXBvc2UiIG5vdCBpbiBzCm9wZW4oYiwgInciLCBl
-            bmNvZGluZz0idXRmLTgiKS53cml0ZShzKQpmID0gInRoaXJkX3BhcnR5L21hcmtkb3duL2
-            1hcmtkb3duLXJlbmRlcmVyL3NyYy9jb21tb25NYWluL2tvdGxpbi9jb20vaHJtL21hcmtk
-            b3duL3JlbmRlcmVyL01hcmtkb3duSW1hZ2Uua3QiCnMgPSBvcGVuKGYsIGVuY29kaW5nPS
-            J1dGYtOCIpLnJlYWQoKQpzID0gcy5yZXBsYWNlKCJpbXBvcnQgY29pbDMuY29tcG9zZS5B
-            c3luY0ltYWdlXG4iLCAiIikKcyA9IHMucmVwbGFjZSgiaW1wb3J0IGNvaWwzLmNvbXBvc2
-            UuQXN5bmNJbWFnZVBhaW50ZXJcbiIsICIiKQppID0gcy5yaW5kZXgoIkFzeW5jSW1hZ2Uo
-            IikKaiA9IHMuaW5kZXgoIlxuICAgICAgICApIiwgaSkgKyBsZW4oIlxuICAgICAgICApIi
-            kKcyA9IHNbOmldICsgIi8vIGNvaWwgZGlzYWJsZWQiICsgc1tqOl0KYXNzZXJ0ICJjb2ls
-            MyIgbm90IGluIHMucmVwbGFjZSgiQ29pbCIsICIiKQpvcGVuKGYsICJ3IiwgZW5jb2Rpbm
-            c9InV0Zi04Iikud3JpdGUocykKcHJpbnQoImNvaWwgcGF0Y2ggYXBwbGllZCIpCg==
-          PATCH_EXPECT_B64: |
-            CmltcG9ydCBvcwpmID0gInRoaXJkX3BhcnR5L21hcmtkb3duL21hcmtkb3duLXJlbmRlcm
-            VyL3NyYy9jb21tb25NYWluL2tvdGxpbi9jb20vaHJtL21hcmtkb3duL3JlbmRlcmVyL3Nl
-            bGVjdGlvbi9QZXJzaXN0ZW50U2VsZWN0aW9uRW5naW5lLmt0IgpzID0gb3BlbihmLCBlbm
-            NvZGluZz0idXRmLTgiKS5yZWFkKCkKcyA9IHMucmVwbGFjZSgiaW50ZXJuYWwgZXhwZWN0
-            IGZ1biBQZXJzaXN0ZW50U2VsZWN0aW9uRW5naW5lKCIsICJpbnRlcm5hbCBmdW4gUGVyc2
-            lzdGVudFNlbGVjdGlvbkVuZ2luZSgiKQpzID0gcy5yZXBsYWNlKCJpbXBvcnQgYW5kcm9p
-            ZHguY29tcG9zZS51aS5Nb2RpZmllciIsCiAgICAgICAgICAgICAgImltcG9ydCBhbmRyb2
-            lkeC5jb21wb3NlLmZvdW5kYXRpb24udGV4dC5zZWxlY3Rpb24uU2VsZWN0aW9uQ29udGFp
-            bmVyXG5pbXBvcnQgYW5kcm9pZHguY29tcG9zZS51aS5Nb2RpZmllciIpCnMgPSBzLnJzdH
-            JpcCgiXG4iKQphc3NlcnQgcy5lbmRzd2l0aCgiKSIpCnMgKz0gIlxue1xuICAgIFNlbGVj
-            dGlvbkNvbnRhaW5lcihtb2RpZmllciA9IG1vZGlmaWVyLCBjb250ZW50ID0gY29udGVudC
-            lcbn1cbiIKb3BlbihmLCAidyIsIGVuY29kaW5nPSJ1dGYtOCIpLndyaXRlKHMpCm9zLnJl
-            bW92ZSgidGhpcmRfcGFydHkvbWFya2Rvd24vbWFya2Rvd24tcmVuZGVyZXIvc3JjL2lvc0
-            1haW4va290bGluL2NvbS9ocm0vbWFya2Rvd24vcmVuZGVyZXIvc2VsZWN0aW9uL1BlcnNp
-            c3RlbnRTZWxlY3Rpb25FbmdpbmUuaW9zLmt0IikKcHJpbnQoImV4cGVjdCBwYXRjaCBhcH
-            BsaWVkIikK
         run: |
           set -uo pipefail
           cd src
-          MD="third_party/markdown/markdown-renderer"
+          # 版本实验：Kotlin/Compose 组合（winner 的文件改动保留，直接续跑全流程）
+          setv() {  # $1=kotlin version  $2=compose version ("keep" 不改)
+            sed -i '' -e "s/version \"2\.[0-9A-Za-z.-]*\"/version \"$1\"/g" build.gradle.kts buildSrc/build.gradle.kts
+            if [ "$2" != "keep" ]; then
+              sed -i '' -e "s/org.jetbrains.compose\") version \"[0-9.]*\"/org.jetbrains.compose\") version \"$2\"/" build.gradle.kts
+            fi
+          }
           exp() {
             name="$1"
             echo "===== EXP $name ====="
-            if ./gradlew :markdown-renderer:compileKotlinIosArm64 > "/tmp/exp_$name.log" 2>&1; then
+            if ./gradlew :markdown-renderer:compileKotlinIosArm64 --stacktrace > "/tmp/exp_$name.log" 2>&1; then
               echo "EXP $name: SUCCESS"
               echo "$name" > /tmp/winner
               return 0
             fi
             echo "EXP $name: FAILED"
-            grep -m6 -E "^e: |IrErrorType" "/tmp/exp_$name.log" || echo "(no e: lines)"
+            grep -m6 -E "^e: |IrErrorType|Could not|requires" "/tmp/exp_$name.log" || echo "(no e: lines)"
             return 1
           }
-          patch_coil() {
-            echo "$PATCH_COIL_B64" | base64 -d | python3
-          }
-          patch_expect() {
-            echo "$PATCH_EXPECT_B64" | base64 -d | python3
-          }
+          reset() { git checkout -q -- build.gradle.kts buildSrc/build.gradle.kts; }
           WIN=""
-          exp base && WIN=base
+          reset; setv 2.5.0-Beta1 1.12.2
+          exp k250c112 && WIN=k250c112
           if [ -z "$WIN" ]; then
-            git checkout -q -- "$MD"; patch_coil
-            exp nocoil && WIN=nocoil
+            reset; setv 2.4.10 keep
+            exp k2410 && WIN=k2410
           fi
           if [ -z "$WIN" ]; then
-            git checkout -q -- "$MD"; patch_expect
-            exp noexpect && WIN=noexpect
-          fi
-          if [ -z "$WIN" ]; then
-            git checkout -q -- "$MD"; patch_coil; patch_expect
-            exp both && WIN=both
+            reset; setv 2.3.21 keep
+            exp k2321 && WIN=k2321
           fi
           echo "WINNER=$WIN"
-          case "$WIN" in
-            base) : ;;
-            nocoil)    git checkout -q -- "$MD"; patch_coil ;;
-            noexpect)  git checkout -q -- "$MD"; patch_expect ;;
-            both)      git checkout -q -- "$MD"; patch_coil; patch_expect ;;
-            *) echo "所有实验均失败"; exit 1 ;;
-          esac
-          { for f in /tmp/exp_*.log; do echo; echo "########## $f"; tail -c 20000 "$f"; done; } > /tmp/gradle.log
-          test -n "$WIN"
+          if [ -z "$WIN" ]; then
+            echo "所有版本实验均失败"
+            { for f in /tmp/exp_*.log; do echo; echo "########## $f"; tail -c 20000 "$f"; done; } > /tmp/gradle.log
+            exit 1
+          fi
+          # winner 的版本配置已在工作区，直接编译完整 framework 继续流水线
+          ./gradlew :shared:linkDebugFrameworkIosArm64 --stacktrace 2>&1 | tee /tmp/gradle.log
+          test -f shared/build/bin/iosArm64/debugFramework/shared.framework/shared
 
       - name: 7/9 生成 Xcode 工程
         run: |
