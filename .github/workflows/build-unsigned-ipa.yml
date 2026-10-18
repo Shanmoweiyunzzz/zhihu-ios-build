@@ -22,7 +22,7 @@ on:
         default: ""
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -377,3 +377,14 @@ jobs:
             logs/
           if-no-files-found: warn
           retention-days: 14
+
+      - name: 发布到 Release（稳定下载通道）
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete build-logs --yes --cleanup-tag 2>/dev/null || true
+          gh release create build-logs --title "构建产物（自动覆盖）" --notes "每次构建覆盖：gradle.log 为最近一次诊断日志；IPA 出现即代表构建成功" || true
+          gh release upload build-logs logs/gradle.log --clobber 2>/dev/null || true
+          [ -f src/ZhihuPlusPlus-unsigned.ipa ] && gh release upload build-logs src/ZhihuPlusPlus-unsigned.ipa --clobber || true
+          gh release view build-logs --json assets -q '.assets[].name' || true
