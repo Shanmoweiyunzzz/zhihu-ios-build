@@ -1,0 +1,296 @@
+# ============================================================================
+#  知乎++ iOS —— 一键编译未签名 IPA
+#
+#  用法（不需要 Mac、不需要改代码）：
+#    1. 在 GitHub 新建一个空仓库（Public / Private 都行，不要勾 README）
+#    2. 上传本文件，路径必须是：.github/workflows/build-unsigned-ipa.yml
+#    3. 上传后自动开始编译；30~60 分钟后到仓库 Actions 页面下载 artifact
+#       （要重跑：Actions -> Build unsigned IPA -> Run workflow）
+#
+#  本文件是自包含的：它会自己拉上游源码、叠加 iOS 宿主层、打补丁、编译、打包。
+#  不需要 fork，也不需要上传其它文件。
+# ============================================================================
+name: Build unsigned IPA
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      upstream_ref:
+        description: "上游分支/标签/提交（留空则用内置锚点）"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build IPA
+    runs-on: macos-15
+    timeout-minutes: 180
+    env:
+      UPSTREAM: "https://github.com/zly2006/zhihu-plus-plus.git"
+      UPSTREAM_SHA: "973ae187134bf0e7e3417064ab8a93d02496e2a0"
+      OVERLAY_B64: |
+        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
+        AA==
+    steps:
+      - name: 1/9 拉取上游源码
+        run: |
+          set -euxo pipefail
+          git clone --depth 1 "$UPSTREAM" src
+          cd src
+          REF="${{ github.event.inputs.upstream_ref }}"
+          if [ -n "${REF:-}" ]; then
+            git fetch --depth 1 origin "$REF" && git checkout -q FETCH_HEAD || echo "指定 ref 拉取失败，改用默认分支"
+          elif git fetch --depth 1 origin "$UPSTREAM_SHA"; then
+            git checkout -q FETCH_HEAD
+            echo "已锚定上游提交 $UPSTREAM_SHA"
+          else
+            echo "锚点拉取失败，改用默认分支 HEAD"
+          fi
+          git log -1 --oneline
+          chmod +x gradlew
+
+      - name: 2/9 叠加 iOS 宿主层
+        run: |
+          set -euxo pipefail
+          python3 -c "import base64,os;open('/tmp/overlay.tar.gz','wb').write(base64.b64decode(os.environ['OVERLAY_B64']))"
+          tar xzf /tmp/overlay.tar.gz -C src
+          echo '--- iosApp ---'
+          find src/iosApp -type f | sort
+          echo '--- iosMain 新增文件 ---'
+          ls -l src/shared/src/iosMain/kotlin/com/github/zly2006/zhihu/MainViewController.kt \
+                src/shared/src/iosMain/kotlin/com/github/zly2006/zhihu/ui/IosZhihuMain.kt \
+                src/shared/src/iosMain/kotlin/com/github/zly2006/zhihu/platform/IosSettingsStore.kt
+
+      - name: 3/9 修复「自动隐藏回答标题」失效 + 补依赖
+        run: |
+          set -euxo pipefail
+          cd src
+          F=shared/src/iosMain/kotlin/com/github/zly2006/zhihu/platform/NativePlatformBridge.ios.kt
+          # 核心修复：返回 noopSettingsStore() 改为真实存储（找不到就报错，绝不静默跳过）
+          python3 - "$F" <<'PATCH'
+          import sys
+          p = sys.argv[1]
+          s = open(p, encoding="utf-8").read()
+          old = "= noopSettingsStore()"
+          new = "= iosSettingsStore(relativePath)"
+          if old not in s:
+              raise SystemExit("补丁目标未找到: " + old)
+          open(p, "w", encoding="utf-8").write(s.replace(old, new))
+          PATCH
+          grep -n "iosSettingsStore" "$F"
+          # nativeMain 用 Ktor Darwin 引擎，iOS 侧缺依赖声明，显式补上
+          cat >> shared/build.gradle.kts <<'APPEND'
+
+          // ==== iOS 宿主补丁：Darwin 引擎依赖 ====
+          kotlin {
+              sourceSets {
+                  named("iosMain") {
+                      dependencies {
+                          implementation("io.ktor:ktor-client-darwin:3.5.0")
+                      }
+                  }
+              }
+          }
+          APPEND
+          tail -14 shared/build.gradle.kts
+
+      - name: 4/9 安装 JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: 5/9 准备 Android SDK（AGP 配置期需要，即使只编 iOS）
+        run: |
+          set -euxo pipefail
+          SDK="${ANDROID_HOME:-}"
+          if [ -z "$SDK" ] || [ ! -d "$SDK" ]; then
+            SDK="$HOME/Library/Android/sdk"
+          fi
+          if [ ! -d "$SDK" ]; then
+            brew install --cask android-commandlinetools
+            SDK="$(brew --prefix)/share/android-commandlinetools"
+          fi
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+          echo "sdk.dir=$SDK" > src/local.properties
+          SM="$(find "$SDK" -type f -name sdkmanager 2>/dev/null | head -1)"
+          if [ -n "$SM" ]; then
+            yes | "$SM" --licenses > /dev/null 2>&1 || true
+            "$SM" "platforms;android-37" > /dev/null 2>&1 || true
+          fi
+
+      - name: 6/9 编译 Kotlin/Native framework
+        run: |
+          set -o pipefail
+          cd src
+          ./gradlew :shared:linkDebugFrameworkIosArm64 --no-daemon --stacktrace 2>&1 | tee /tmp/gradle.log
+
+      - name: 7/9 生成 Xcode 工程
+        run: |
+          set -euxo pipefail
+          brew install xcodegen
+          cd src/iosApp
+          xcodegen generate
+          ls -la
+
+      - name: 8/9 编译 App
+        run: |
+          set -o pipefail
+          cd src
+          xcodebuild \
+            -project iosApp/ZhihuPlusPlus.xcodeproj \
+            -scheme ZhihuPlusPlus \
+            -configuration Debug \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build 2>&1 | tee /tmp/xcodebuild.log
+
+      - name: 9/9 打包未签名 IPA
+        run: |
+          set -euxo pipefail
+          cd src
+          APP="$(find build/Build/Products -maxdepth 3 -name 'ZhihuPlusPlus.app' | head -1)"
+          test -n "$APP"
+          RES="$(find shared/build -type d -name 'compose-resources' 2>/dev/null | head -1 || true)"
+          if [ -n "$RES" ]; then cp -R "$RES" "$APP/"; fi
+          mkdir -p out/Payload
+          cp -R "$APP" out/Payload/
+          cd out
+          zip -qry ../ZhihuPlusPlus-unsigned.ipa Payload
+          cd ..
+          ls -lh ZhihuPlusPlus-unsigned.ipa
+          unzip -l ZhihuPlusPlus-unsigned.ipa | head -15
+
+      - name: 收集日志
+        if: always()
+        run: |
+          mkdir -p logs
+          cp /tmp/gradle.log logs/ 2>/dev/null || true
+          cp /tmp/xcodebuild.log logs/ 2>/dev/null || true
+          echo "=== 失败摘要（若有） ==="
+          grep -m 30 -E "error:|^e: |FAILURE|Undefined symbols|not found" logs/*.log 2>/dev/null || echo "(无错误关键字)"
+
+      - name: 上传 IPA 与日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZhihuPlusPlus-unsigned-ipa
+          path: |
+            src/ZhihuPlusPlus-unsigned.ipa
+            logs/
+          if-no-files-found: warn
+          retention-days: 14
