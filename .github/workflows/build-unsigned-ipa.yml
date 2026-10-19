@@ -33,114 +33,117 @@ jobs:
       UPSTREAM: "https://github.com/zly2006/zhihu-plus-plus.git"
       UPSTREAM_SHA: "973ae187134bf0e7e3417064ab8a93d02496e2a0"
       OVERLAY_B64: |
-            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
-            AA==
+            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
     steps:
       - name: 1/9 拉取上游源码
         run: |
@@ -277,94 +280,104 @@ jobs:
         run: |
           set -uo pipefail
           cd src
+
+          BC=third_party/markdown/markdown-renderer/build.gradle.kts
+          IOSACT=third_party/markdown/markdown-renderer/src/iosMain/kotlin/com/hrm/markdown/renderer/selection/PersistentSelectionEngine.ios.kt
+
           diag() {
             log="$1"
             echo "---- What went wrong ----"
-            grep -m1 -A 20 "^\* What went wrong" "$log" || echo "(none)"
-            echo "---- e: 行（前 25 条） ----"
-            grep -m25 "^e: " "$log" || echo "(无 e: 行)"
+            grep -m1 -A 12 "^\* What went wrong" "$log" || echo "(none)"
+            echo "---- e: 行（前 15 条） ----"
+            grep -m15 "^e: " "$log" || echo "(无 e: 行)"
             echo "---- IrErrorType ----"
             grep -m2 "IrErrorType" "$log" || echo "(无)"
           }
 
+          comp() {
+            ./gradlew :markdown-renderer:compileKotlinIosArm64 > "/tmp/arm_$1.log" 2>&1
+          }
+
           OK=0
-          echo "########## A 基线：Kotlin 2.4.0 + CMP 1.11.1 + coil 3.5.0 ##########"
-          if ./gradlew :markdown-renderer:compileKotlinIosArm64 > /tmp/main.log 2>&1; then
-            echo "A: SUCCESS"
+          echo "########## A 基线编译（复现） ##########"
+          if comp base; then
+            echo "A: SUCCESS —— 基线已通过，无需假设矩阵"
             OK=1
           else
             echo "A: FAILED"
-            diag /tmp/main.log > /tmp/diag_main.txt
+            diag /tmp/arm_base.log > /tmp/diag_main.txt
             cat /tmp/diag_main.txt
           fi
 
+          cp -f "$BC" /tmp/bc.bak
+          cp -f "$IOSACT" /tmp/iosact.bak
+
+          restore_all() {
+            cp -f /tmp/bc.bak "$BC"
+            cp -f /tmp/iosact.bak "$IOSACT"
+          }
+
+          # 假设 1：iOS 走框架自带 SelectionContainer 是触发点（macOS/JVM/Android 都不走它）
+          patch_selection() {
+            cat > "$IOSACT" <<'KT'
+          package com.hrm.markdown.renderer.selection
+
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
+
+          @Composable
+          internal actual fun PersistentSelectionEngine(
+              modifier: Modifier,
+              content: @Composable () -> Unit,
+          ) {
+              content()
+          }
+          KT
+          }
+
+          # 假设 2：material3 1.10.0-alpha05 的 iOS 构件是 legacy uikitArm64（ABI 2.2.0），
+          # 与 ui/foundation 1.11.1（ABI 2.3.0）串味；换成同线的 1.11.0-alpha07（ABI 2.3.0）
+          patch_material3() {
+            find . -name build.gradle.kts -not -path "*/build/*" -exec sed -i '' -E 's/material3:1\.10\.0-alpha05/material3:1.11.0-alpha07/g' {} +
+          }
+
+          patch_both() {
+            patch_selection
+            patch_material3
+          }
+
+          WIN=""
+          run_arm() {
+            name="$1"
+            fn="$2"
+            echo "########## ARM $name ##########"
+            restore_all
+            "$fn"
+            if comp "$name"; then
+              echo "ARM $name: SUCCESS"
+              WIN="$name"
+              return 0
+            fi
+            echo "ARM $name: FAILED"
+            diag "/tmp/arm_$name.log" | sed -n '1,22p'
+            return 1
+          }
+
           if [ "$OK" != "1" ]; then
-            echo "########## B 解析后的 klib 依赖图（查版本冲突） ##########"
-            if ./gradlew :markdown-renderer:dependencies --configuration iosArm64CompileKlibraries > /tmp/deps.log 2>&1; then
-              echo "B: ok，总行数 $(wc -l < /tmp/deps.log)"
-              grep -nE "androidx\.compose|org\.jetbrains\.compose|coil|ktor|FAILED| -> " /tmp/deps.log | head -120 || true
-            else
-              echo "B: FAILED"
-              tail -30 /tmp/deps.log || true
-            fi
-
-            echo "########## C 跨平台探针：同一份 commonMain 编 JVM / macOS ##########"
-            if ./gradlew :markdown-renderer:compileKotlinJvm > /tmp/probe_jvm.log 2>&1; then
-              echo "C-JVM: SUCCESS"
-            else
-              echo "C-JVM: FAILED"
-              grep -m8 "^e: " /tmp/probe_jvm.log || true
-            fi
-            if ./gradlew :markdown-renderer:compileKotlinMacosArm64 > /tmp/probe_macos.log 2>&1; then
-              echo "C-MACOS: SUCCESS"
-            else
-              echo "C-MACOS: FAILED"
-              grep -m8 "^e: " /tmp/probe_macos.log || true
-            fi
-
-            echo "########## D 源码二分：定位触发 IrErrorType 的文件 ##########"
-            echo "判读：仍 IrErrorType=触发源在保留集；其余结果=触发源在移除集"
-            MDR=third_party/markdown/markdown-renderer/src
-            CAND=()
-            while IFS= read -r f; do CAND+=("$f"); done < <(cd "$MDR" && find commonMain iosMain -name '*.kt' | sort)
-            echo "候选文件数=${#CAND[@]}"
-            STEP=0
-            while [ "${#CAND[@]}" -gt 1 ] && [ "$STEP" -lt 8 ]; do
-              STEP=$((STEP + 1))
-              N=${#CAND[@]}
-              HALF=$((N / 2))
-              H1=("${CAND[@]:0:$HALF}")
-              H2=("${CAND[@]:$HALF}")
-              echo "===== STEP $STEP: 候选 $N 个 → 保留 ${#H1[@]} / 移除 ${#H2[@]} ====="
-              rm -rf /tmp/hold
-              mkdir -p /tmp/hold
-              for f in "${H2[@]}"; do
-                mkdir -p "/tmp/hold/$(dirname "$f")"
-                mv "$MDR/$f" "/tmp/hold/$f" 2>/dev/null || true
-              done
-              if ./gradlew :markdown-renderer:compileKotlinIosArm64 > "/tmp/bisect_step$STEP.log" 2>&1; then
-                echo "STEP $STEP: 无崩溃 → 触发源在移除集"
-                CAND=("${H2[@]}")
-              elif grep -q "IrErrorType" "/tmp/bisect_step$STEP.log"; then
-                echo "STEP $STEP: 仍 IrErrorType → 触发源在保留集"
-                CAND=("${H1[@]}")
-              else
-                echo "STEP $STEP: 出现普通编译错误 → 触发源在移除集"
-                grep -m8 "^e: " "/tmp/bisect_step$STEP.log" || true
-                CAND=("${H2[@]}")
+            if run_arm selection patch_selection; then :; else
+              if run_arm m3 patch_material3; then :; else
+                run_arm both patch_both || true
               fi
-              cp -R /tmp/hold/. "$MDR"/
-              rm -rf /tmp/hold
-              echo "STEP $STEP: 新候选数=${#CAND[@]} 已还原文件数=$(cd "$MDR" && find commonMain iosMain -name '*.kt' | wc -l)"
-            done
-            echo "===== 二分结论：最可疑文件 ====="
-            printf '%s\n' "${CAND[@]}" | tee /tmp/bisect_result.txt
-          fi
-
-          if [ "$OK" != "1" ]; then
-            { for f in /tmp/main.log /tmp/probe_jvm.log /tmp/probe_macos.log; do echo; echo "########## $f"; diag "$f"; done; } > /tmp/gradle.log
-            echo "编译未通过：已产出诊断日志，退出"
-            exit 1
+            fi
+            echo "$WIN" > /tmp/winner.txt
+            echo "########## 假设矩阵结论：WINNER=${WIN:-(无)} ##########"
+            if [ -z "$WIN" ]; then
+              restore_all
+              { for f in /tmp/arm_*.log; do echo; echo "########## $f"; diag "$f"; done; } > /tmp/gradle.log
+              echo "编译未通过：已产出诊断日志，退出"
+              exit 1
+            fi
+            echo "保留 WINNER=$WIN 的补丁，继续链接"
           fi
 
           echo "########## 链接 framework ##########"
@@ -420,8 +433,8 @@ jobs:
           cp /tmp/deps.log logs/ 2>/dev/null || true
           cp /tmp/probe_jvm.log logs/ 2>/dev/null || true
           cp /tmp/probe_macos.log logs/ 2>/dev/null || true
-          cp /tmp/bisect_step*.log logs/ 2>/dev/null || true
-          cp /tmp/bisect_result.txt logs/ 2>/dev/null || true
+          cp /tmp/arm_*.log logs/ 2>/dev/null || true
+          cp /tmp/winner.txt logs/ 2>/dev/null || true
           cp /tmp/diag_*.txt logs/ 2>/dev/null || true
           echo "=== 失败摘要（若有） ==="
           grep -m 30 -E "error:|^e: |FAILURE|Undefined symbols|not found" logs/*.log 2>/dev/null || echo "(无错误关键字)"
